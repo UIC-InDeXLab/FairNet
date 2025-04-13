@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
-from typing import Tuple, List, Set
-
-Point = Tuple[float, ...]  # d-dimensional point
+from typing import List, Set
+from core.points import Point
 
 
 class Range(ABC):
@@ -38,7 +37,7 @@ class RectangleRange(Range):
         self.ymax = ymax
 
     def contains(self, point: Point) -> bool:
-        x, y = point
+        x, y = point.point
         return self.xmin <= x <= self.xmax and self.ymin <= y <= self.ymax
 
 
@@ -60,6 +59,7 @@ class BallRange(Range):
 
     def contains(self, point: Point) -> bool:
         assert len(point) == self.dim, "Point dimensionality mismatch."
+        point = point.point
         return sum((p - c) ** 2 for p, c in zip(point, self.center)) <= self.radius**2
 
 
@@ -75,6 +75,7 @@ class HalfspaceRange(Range):
         self.__class__.vc_dim = self.dim + 1
 
     def contains(self, point: Point) -> bool:
+        point = point.point
         return sum(a * x for a, x in zip(self.normal, point)) <= self.offset
 
 

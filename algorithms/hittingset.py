@@ -2,9 +2,25 @@ import numpy as np
 
 from typing import List
 from scipy.optimize import linprog
+from enum import Enum
 
-from core.ranges import Point, Range
+from core.ranges import Range
 from algorithms.epsnet import build_epsnet_sample
+from core.points import Point
+
+
+class HittingSetStrategy(Enum):
+    GREEDY = "greedy"
+    GEOMETRIC = "geometric"
+
+
+def find_hitting_set(strategy: HittingSetStrategy, **kwargs) -> List[Point]:
+    if strategy == HittingSetStrategy.GREEDY:
+        return find_hitting_set_greedy(**kwargs)
+    elif strategy == HittingSetStrategy.GEOMETRIC:
+        return find_hitting_set_geometric(**kwargs)
+    else:
+        raise NotImplementedError("Strategy not implemented.")
 
 
 def find_hitting_set_greedy(
@@ -18,12 +34,12 @@ def find_hitting_set_greedy(
         ranges (List[Range]): The ranges to cover.
         limit (int): The maximum size of the hitting set. Default is -1 (no limit).
     """
-    # TODO: Implement limit functionality
 
     hitting_set = []  # The resulting hitting set
     remaining_ranges = rangespace.copy()  # Copy of ranges to track uncovered ranges
+    counter = limit
 
-    while remaining_ranges:
+    while remaining_ranges and (limit == -1 or counter > 0):
         # Count how many ranges each point hits
         point_hits = {point: 0 for point in points}
         for r in remaining_ranges:
@@ -40,6 +56,8 @@ def find_hitting_set_greedy(
         # Remove all ranges hit by the best point
         remaining_ranges = [r for r in remaining_ranges if best_point not in r]
 
+        counter -= 1
+    print(f"[find_hitting_set_greedy] hitting set size: {len(hitting_set)}")
     return hitting_set
 
 

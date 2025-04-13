@@ -2,9 +2,10 @@ import math
 import random
 
 from enum import Enum
-from typing import List, Set
+from typing import List, Set, Tuple
 
 from core.ranges import *
+from core.points import Point
 
 
 class EpsNetStrategy(Enum):
@@ -14,12 +15,12 @@ class EpsNetStrategy(Enum):
 
 
 def build_epsnet(strategy: EpsNetStrategy = "sample", **kwargs):
-    if strategy == "sample":
-        build_epsnet_sample(**kwargs)
-    elif strategy == "disc":
-        build_epsnet_discrepancy(**kwargs)
-    elif strategy == "sketch_merge":
-        build_epsnet_sketch_merge(**kwargs)
+    if strategy == EpsNetStrategy.SAMPLE:
+        return build_epsnet_sample(**kwargs)
+    elif strategy == EpsNetStrategy.DISCREPANCY:
+        return build_epsnet_discrepancy(**kwargs)
+    elif strategy == EpsNetStrategy.SKETCH_MERGE:
+        return build_epsnet_sketch_merge(**kwargs)
     else:
         raise NotImplementedError("Strategy not implemented.")
 
@@ -161,7 +162,7 @@ def build_epsnet_sketch_merge(
 
 
 def _sketch_merge(
-    partitions: List[Set[Point]], rangespace: List[Set[Point]]
+    partitions: List[Set[Point]], rangespace: List[Set[Point]], halving=_random_halving
 ) -> List[Set[Point]]:
     length = len(partitions)
     while length > 1:
@@ -175,7 +176,7 @@ def _sketch_merge(
                     set(partitions[2 * i]) | set(partitions[2 * i + 1])
                 )  # Merging
                 # TODO[optimize]: we are always passing the whole ranges!
-                _, partitions[i] = _random_halving(merged, rangespace)  # Halving
+                _, partitions[i] = halving(merged, rangespace)  # Halving
             except IndexError:
                 # Odd number of partitions, last one remains
                 raise ValueError(

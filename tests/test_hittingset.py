@@ -1,9 +1,10 @@
 import unittest
 import random
 
-from algorithms.hittingset import find_hitting_set_geometric
+from algorithms.hittingset import find_hitting_set, HittingSetStrategy
 from core.verification import is_hitting_set
 from core.ranges import RectangleRange, get_range_space
+from core.points import Point
 
 
 class TestHittingSet(unittest.TestCase):
@@ -14,7 +15,8 @@ class TestHittingSet(unittest.TestCase):
         self.n = 2**10
         self.m = 2**9
         self.points = [
-            (random.uniform(0, 1), random.uniform(0, 1)) for _ in range(self.n)
+            Point((random.uniform(0, 1), random.uniform(0, 1)), random.randint(0, 10))
+            for _ in range(self.n)
         ]
 
         # Generate self.m rectangles with random bounds
@@ -32,8 +34,17 @@ class TestHittingSet(unittest.TestCase):
 
         print(f"n: {len(self.points)}, m: {len(self.ranges)}")
 
-    def test_hitting_set(self):
-        hitting_set = find_hitting_set_geometric(
+    def test_hitting_set_greedy(self):
+        hitting_set = find_hitting_set(
+            strategy=HittingSetStrategy.GREEDY,
+            points=self.points,
+            rangespace=self.rangespace,
+        )
+        self.assertTrue(is_hitting_set(hitting_set, self.rangespace))
+
+    def test_hitting_set_geometric(self):
+        hitting_set = find_hitting_set(
+            strategy=HittingSetStrategy.GEOMETRIC,
             points=self.points,
             rangespace=self.rangespace,
             vc=self.ranges[0].vc_dim,
