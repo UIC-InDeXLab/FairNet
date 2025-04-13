@@ -7,7 +7,7 @@ from algorithms.epsnet import _greedy_discrepancy_halving, _sketch_merge
 def build_fair_epsnet(strategy: EpsNetStrategy, fairconfig: FairConfig, **kwargs):
     if strategy == EpsNetStrategy.SAMPLE:
         return build_fair_epsnet_sample(fairconfig=fairconfig, **kwargs)
-    elif strategy == EpsNetStrategy.DISCREPANCY:  # TODO
+    elif strategy == EpsNetStrategy.DISCREPANCY:
         return build_fair_epsnet_discrepancy(fairconfig=fairconfig, **kwargs)
     elif strategy == EpsNetStrategy.SKETCH_MERGE:
         return build_fair_epsnet_sketch_merge(fairconfig=fairconfig, **kwargs)
@@ -22,6 +22,8 @@ def build_fair_epsnet_sample(
     epsilon,
     fairconfig: FairConfig,
     success_prob=0.9,
+    c1=1,
+    weights=None,  # used for sampling and also fairness (weighted ratios)
 ) -> List[Point]:
     d = vc
     m = get_epsnet_size(epsilon, d, success_prob)
@@ -30,7 +32,7 @@ def build_fair_epsnet_sample(
     fairness = fairconfig.fairness
     k = fairconfig.k
     # v = math.ceil(2 * math.log(4 * k))
-    v = math.ceil(math.log(4 * k))
+    v = c1 * math.ceil(math.log(4 * k))
     print(f"[build_fair_epsnet_sample] epsnet size m: {int(m)}, v: {v}")
 
     color_ratios = []
@@ -40,10 +42,10 @@ def build_fair_epsnet_sample(
         color_ratios.append(len(rate) / len(points))
 
     if fairness == FairnessMeasure.DP:
-        epsnet = random.choices(points, k=math.ceil(m))
+        epsnet = random.choices(points, weights=weights, k=math.ceil(m))
         while not _is_good_epsnet(epsnet, k, v, color_ratios):
             print("[build_fair_epsnet_sample] Bad epsnet, resampling...")
-            epsnet = random.choices(points, k=math.ceil(m))
+            epsnet = random.choices(points, weights=weights, k=math.ceil(m))
         return _augment_epsnet(epsnet, points, color_ratios, v, k)
     else:
         # Custom-ratio
@@ -59,9 +61,11 @@ def _is_good_epsnet(
     """
     Check if the epsnet is good.
     """
+    W = sum([p.weight for p in epsnet])
     for color in range(k):
-        epsnet_ratio = len([p for p in epsnet if p.color == color])
-        if epsnet_ratio > v * color_ratios[color] * len(epsnet):
+        epsnet_ratio = sum([p.weight for p in epsnet if p.color == color])
+
+        if epsnet_ratio > v * color_ratios[color] * W:
             return False
     return True
 
@@ -79,12 +83,13 @@ def _augment_epsnet(
     print("[_augment_epsnet] epsnet colors count:")
     for color in range(k):
         print(
-            f"\t[_augment_epsnet] Color {color}: {len([p for p in epsnet if p.color == color])}"
+            f"\t[_augment_epsnet] Color {color}: {sum([p.weight for p in epsnet if p.color == color])}"
         )
+    W = sum([p.weight for p in epsnet])
     to_adds = []
     for color in range(k):
-        to_add = v * color_ratios[color] * len(epsnet) - len(
-            [p for p in epsnet if p.color == color]
+        to_add = v * color_ratios[color] * W - sum(
+            [p.weight for p in epsnet if p.color == color]
         )
         to_add = int(to_add)
         to_adds.append(to_add)
@@ -93,9 +98,13 @@ def _augment_epsnet(
     for color in range(k):
         to_add = to_adds[color]
         if to_add > 0:
-            epsnet += random.choices(
-                [p for p in points if p.color == color], k=math.ceil(to_add)
+            # TODO[optimize]: this can be done faster
+            # first sort colors by weight then randomly select
+            sorted_points = sorted(
+                [p for p in points if (p.color == color and p not in epsnet)],
+                key=lambda x: x.weight,
             )
+            epsnet += sorted_points[:to_add]
     return epsnet
 
 

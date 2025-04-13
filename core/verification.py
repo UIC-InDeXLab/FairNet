@@ -93,3 +93,41 @@ def is_fair_epsnet(
             return False
 
     return True
+
+
+def is_fair_hittingset(
+    hitting_set: List[Point], rangespace: List[Set[Point]], points: List[Point]
+) -> bool:
+    """
+    Verify if the given points form a fair hitting set for the specified ranges.
+
+    Parameters:
+        points (List[Point]): The points to verify.
+        ranges (List[Range]): The ranges to verify against.
+        color_ratios (List[float]): The color ratios for fairness.
+
+    Returns:
+        bool: True if the points form a fair hitting set, False otherwise.
+    """
+    
+    color_ratios = []
+    for i in range(len(points)):
+        rate = [p for p in points if p.color == i]
+        color_ratios.append(len(rate) / len(points))
+    
+    for r in rangespace:
+        if not any(p in r for p in hitting_set):
+            print("Not a hitting set!")
+            return False
+
+    # Check color ratios
+    for i, color_ratio in enumerate(color_ratios):
+        # check if the ratio is almost equal
+        if (
+            abs(len([p for p in hitting_set if p.color == i]) / len(hitting_set)
+                - color_ratio) > 0.01
+        ):
+            print("Not a fair hitting set!")
+            return False
+
+    return True
