@@ -34,7 +34,12 @@ def get_epsnet_size(epsilon, vc, success_prob):
 
 
 def build_epsnet_sample(
-    points: List[Point], rangespace: List[Set[Point]], vc, epsilon, success_prob=0.9
+    points: List[Point],
+    rangespace: List[Set[Point]],
+    vc,
+    epsilon,
+    success_prob=0.9,
+    weights=None,
 ) -> List[Point]:
     """
     Build eps-nets by random sampling.
@@ -47,7 +52,7 @@ def build_epsnet_sample(
     m = get_epsnet_size(epsilon, d, success_prob)
     m = min(m, len(points))
     print(f"[build_epsnet_sample] epsnet size m: {int(m)}")
-    return random.choices(points, k=math.ceil(m))
+    return random.choices(points, weights=weights, k=math.ceil(m))
 
 
 def build_epsnet_discrepancy(
@@ -131,7 +136,6 @@ def build_epsnet_sketch_merge(
         ranges (List[Range])
         epsilon (float): Epsilon parameter for the eps-net.
         c1 (float): Constant for partition size.
-        c2 (float): Constant for final size of epsnet.
     """
     d = vc
 

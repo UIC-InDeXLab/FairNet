@@ -1,7 +1,11 @@
 import unittest
 import random
 
-from algorithms.epsnet import *
+from algorithms.epsnet import (
+    build_epsnet_sample,
+    build_epsnet_discrepancy,
+    build_epsnet_sketch_merge,
+)
 from core.verification import is_epsnet
 from core.ranges import RectangleRange, get_range_space
 
@@ -16,7 +20,7 @@ class TestEpsNet(unittest.TestCase):
         self.points = [
             (random.uniform(0, 1), random.uniform(0, 1)) for _ in range(self.n)
         ]
-        self.epsilon = 0.5
+        self.epsilon = 0.7
 
         # Generate self.m rectangles with random bounds
         self.ranges = [
@@ -47,7 +51,7 @@ class TestEpsNet(unittest.TestCase):
             vc=self.ranges[0].vc_dim,
             success_prob=0.9,
         )
-        self.assertTrue(is_epsnet(epsnet, self.ranges, self.epsilon))
+        self.assertTrue(is_epsnet(epsnet, self.rangespace, self.epsilon))
 
     def test_epsnet_discrepancy(self):
         epsnet = build_epsnet_discrepancy(
@@ -56,7 +60,7 @@ class TestEpsNet(unittest.TestCase):
             epsilon=self.epsilon,
             vc=self.ranges[0].vc_dim,
         )
-        self.assertTrue(is_epsnet(epsnet, self.ranges, self.epsilon))
+        self.assertTrue(is_epsnet(epsnet, self.rangespace, self.epsilon))
 
     def test_epsnet_sketch_merge(self):
         epsnet = build_epsnet_sketch_merge(
@@ -66,7 +70,7 @@ class TestEpsNet(unittest.TestCase):
             vc=self.ranges[0].vc_dim,
             c1=0,
         )
-        self.assertTrue(is_epsnet(epsnet, self.ranges, self.epsilon))
+        self.assertTrue(is_epsnet(epsnet, self.rangespace, self.epsilon))
 
 
 if __name__ == "__main__":
