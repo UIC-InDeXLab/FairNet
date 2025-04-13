@@ -1,2 +1,6 @@
 # FairNet
-A Fair implementation of Epsilon Net, Epsilon Sample, and Geometric Set Cover.
+A Python implementation of approximate geometric sampling: 
+- Epsilon Net
+- Epsilon Sample
+- Geometric Hitting Set
+- Geometric Set Cover
