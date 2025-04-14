@@ -93,6 +93,7 @@ def find_fair_hitting_set_geometric(
         weights=weights,
         fairconfig=fairconfig,
         c1=c1,
+        c2=4,
     )
     print(f"[find_fair_hitting_set_geometric] epsnet size: {len(epsnet)}")
     return epsnet

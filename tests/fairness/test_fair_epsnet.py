@@ -125,3 +125,17 @@ class TestFairEpsNet(unittest.TestCase):
         self.assertTrue(
             is_fair_epsnet(epsnet, self.rangespace_28, self.epsilon, self.points_28)
         )
+
+    def test_fair_epsnet_naive(self):
+        fairconfig = FairConfig(k=2, fairness=FairnessMeasure.DP)
+        epsnet = build_fair_epsnet(
+            strategy=EpsNetStrategy.NAIVE_FAIR,
+            points=self.points_28,
+            rangespace=self.rangespace_28,
+            epsilon=self.epsilon,
+            vc=self.ranges[0].vc_dim,
+            fairconfig=fairconfig
+        )
+        self.assertTrue(
+            is_fair_epsnet(epsnet, self.rangespace_28, self.epsilon, self.points_28)
+        )

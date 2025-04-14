@@ -55,6 +55,7 @@ class BallRange(Range):
         self.center = center
         self.radius = radius
         self.dim = len(center)
+        self.dim = len(center)
         self.__class__.vc_dim = self.dim + 1
 
     def contains(self, point: Point) -> bool:
@@ -72,6 +73,7 @@ class HalfspaceRange(Range):
         """
         self.normal = normal
         self.offset = offset
+        self.dim = len(normal)
         self.__class__.vc_dim = self.dim + 1
 
     def contains(self, point: Point) -> bool:

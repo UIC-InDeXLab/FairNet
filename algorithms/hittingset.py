@@ -67,7 +67,12 @@ def find_hitting_set_geometric(
     weights, epsilon = _get_reweights(points, rangespace)
     print(f"[find_hitting_set_geometric] epsilon: {epsilon}")
     epsnet = build_epsnet_sample(
-        points=points, rangespace=rangespace, epsilon=epsilon, vc=vc, weights=weights
+        points=points,
+        rangespace=rangespace,
+        epsilon=epsilon,
+        vc=vc,
+        weights=weights,
+        c1=4,
     )
     print(f"[find_hitting_set_geometric] epsnet size: {len(epsnet)}")
     return epsnet

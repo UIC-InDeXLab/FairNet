@@ -12,6 +12,7 @@ class EpsNetStrategy(Enum):
     SAMPLE = "sample"
     DISCREPANCY = "disc"
     SKETCH_MERGE = "sketch_merge"
+    NAIVE_FAIR = "naive_fair"
 
 
 def build_epsnet(strategy: EpsNetStrategy = "sample", **kwargs):
@@ -25,12 +26,13 @@ def build_epsnet(strategy: EpsNetStrategy = "sample", **kwargs):
         raise NotImplementedError("Strategy not implemented.")
 
 
-def get_epsnet_size(epsilon, vc, success_prob):
+def get_epsnet_size(epsilon, vc, success_prob, c1=1):
     phi = 1 - success_prob
     d = vc
     m = max(
         (4 / epsilon) * math.log2(4 / phi), (8 * d / epsilon) * math.log2(16 / epsilon)
     )
+    m = m/c1
     return math.ceil(m)
 
 
@@ -41,6 +43,7 @@ def build_epsnet_sample(
     epsilon,
     success_prob=0.9,
     weights=None,
+    c1=1
 ) -> List[Point]:
     """
     Build eps-nets by random sampling.
@@ -50,14 +53,14 @@ def build_epsnet_sample(
         - Chapter 5
     """
     d = vc
-    m = get_epsnet_size(epsilon, d, success_prob)
+    m = get_epsnet_size(epsilon, d, success_prob, c1)
     m = min(m, len(points))
     print(f"[build_epsnet_sample] epsnet size m: {int(m)}")
     return random.choices(points, weights=weights, k=math.ceil(m))
 
 
 def build_epsnet_discrepancy(
-    points: List[Point], rangespace: List[Set[Point]], vc, epsilon
+    points: List[Point], rangespace: List[Set[Point]], vc, epsilon, c1=1
 ) -> List[Point]:
     """Build eps-net by iterative discrepancy halving.
 
@@ -67,7 +70,7 @@ def build_epsnet_discrepancy(
     """
     d = vc
     # m = c1 * (d / epsilon) * math.log(d / epsilon)  # TODO: what is constant?
-    m = get_epsnet_size(epsilon, d, 0.9)
+    m = get_epsnet_size(epsilon, d, 0.9, c1)
     m = min(m, len(points))
     print(f"[build_epsnet_discrepancy] epsnet size m: {int(m)}")
     subset = points
@@ -127,7 +130,7 @@ def _random_halving(points: List[Point], rangespace: List[Set[Point]]) -> List[P
 
 
 def build_epsnet_sketch_merge(
-    points: List[Point], rangespace: List[Set[Point]], vc, epsilon, c1
+    points: List[Point], rangespace: List[Set[Point]], vc, epsilon, c1, c2=1
 ) -> List[Point]:
     """
     Build eps-net by sketch-and-merge discrepancy.
@@ -140,7 +143,7 @@ def build_epsnet_sketch_merge(
     """
     d = vc
 
-    m = get_epsnet_size(epsilon, d, 0.9)  # size of final epsnet
+    m = get_epsnet_size(epsilon, d, 0.9, c2)  # size of final epsnet
     m = min(m, len(points))
     print(f"[build_epsnet_sketch_merge] epsnet size m: {int(m)}")
 
