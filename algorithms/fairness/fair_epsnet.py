@@ -23,6 +23,7 @@ def build_fair_epsnet_sample(
     vc,
     epsilon,
     fairconfig: FairConfig,
+    color_ratios, # look at the comment in the function
     success_prob=0.9,
     c1=1,
     c2=1,
@@ -38,11 +39,11 @@ def build_fair_epsnet_sample(
     v = c1 * math.ceil(math.log(4 * k))
     print(f"[build_fair_epsnet_sample] epsnet size m: {int(m)}, v: {v}")
 
-    color_ratios = []
-    # TODO[optimize]: this can be done faster
-    for i in range(k):
-        rate = [p for p in points if p.color == i]
-        color_ratios.append(len(rate) / len(points))
+    # color_ratios = []
+    # # TODO[optimize]: this can be done faster
+    # for i in range(k):
+    #     rate = [p for p in points if p.color == i]
+    #     color_ratios.append(len(rate) / len(points))
 
     if fairness == FairnessMeasure.DP:
         epsnet = random.choices(points, weights=weights, k=math.ceil(m))
