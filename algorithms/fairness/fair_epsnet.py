@@ -104,8 +104,8 @@ def _augment_epsnet(
         if to_add > 0:
             # randomly select points from the point-set
             epsnet += random.sample(
-                # [p for p in points if (p.color == color and p not in epsnet)],
-                points,
+                [p for p in points if (p.color == color)],
+                # points,
                 to_add,
             )
         # if to_add > 0:
@@ -116,6 +116,12 @@ def _augment_epsnet(
         #         key=lambda x: x.weight,
         #     )
         #     epsnet += sorted_points[:to_add]
+    
+    print("[_augment_epsnet] epsnet colors count after augmentation:")
+    for color in range(k):
+        print(
+            f"\t[_augment_epsnet] Color {color}: {len([p for p in epsnet if p.color == color])}"
+        )
     return epsnet
 
 

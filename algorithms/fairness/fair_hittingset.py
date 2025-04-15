@@ -94,6 +94,7 @@ def find_fair_hitting_set_geometric(
         fairconfig=fairconfig,
         c1=c1,
         c2=4,
+        color_ratios=color_ratios
     )
     print(f"[find_fair_hitting_set_geometric] epsnet size: {len(epsnet)}")
     return epsnet

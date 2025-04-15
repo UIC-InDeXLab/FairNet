@@ -67,3 +67,9 @@ venv.bak/
 tests/__pycache__/
 tests/*.py[cod]
 tests/.pytest_cache/
+
+experiments/datasets/*
+# Allow only Jupyter Notebook files
+!experiments/datasets/*.ipynb
+!experiments/datasets/*.py
+!experiments/datasets/*.csv

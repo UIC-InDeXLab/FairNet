@@ -52,14 +52,14 @@ class BallRange(Range):
             center (Point): The center of the ball (d-dimensional).
             radius (float): The radius of the ball.
         """
-        self.center = center
+        self.center = center.point
         self.radius = radius
-        self.dim = len(center)
-        self.dim = len(center)
+        self.dim = len(center.point)
+        self.dim = len(center.point)
         self.__class__.vc_dim = self.dim + 1
 
     def contains(self, point: Point) -> bool:
-        assert len(point) == self.dim, "Point dimensionality mismatch."
+        assert len(point.point) == self.dim, "Point dimensionality mismatch."
         point = point.point
         return sum((p - c) ** 2 for p, c in zip(point, self.center)) <= self.radius**2
 
