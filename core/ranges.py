@@ -40,6 +40,23 @@ class RectangleRange(Range):
         x, y = point.point
         return self.xmin <= x <= self.xmax and self.ymin <= y <= self.ymax
 
+class HyperRectangleRange(Range):
+    vc_dim = None
+
+    def __init__(self, mins: List[float], maxs: List[float]):
+        """
+        Defines a d-dimensional rectangle
+        """
+        self.mins = mins
+        self.maxs = maxs
+        self.dim = len(mins)
+        self.__class__.vc_dim = self.dim + 1
+
+    def contains(self, point: Point) -> bool:
+        assert len(point.point) == self.dim, "Point dimensionality mismatch."
+        point = point.point
+        return all(m <= p <= M for m, p, M in zip(self.mins, point, self.maxs))
+
 
 class BallRange(Range):
     vc_dim = None

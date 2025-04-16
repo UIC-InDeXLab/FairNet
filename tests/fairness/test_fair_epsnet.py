@@ -77,6 +77,7 @@ class TestFairEpsNet(unittest.TestCase):
             vc=self.ranges[0].vc_dim,
             fairconfig=fairconfig,
             success_prob=0.9,
+            color_ratios=[0.5, 0.5],
         )
         self.assertTrue(
             is_fair_epsnet(epsnet, self.rangespace_55, self.epsilon, self.points_55)
@@ -92,6 +93,7 @@ class TestFairEpsNet(unittest.TestCase):
             vc=self.ranges[0].vc_dim,
             fairconfig=fairconfig,
             success_prob=0.9,
+            color_ratios=[0.25, 0.75],
         )
         self.assertTrue(
             is_fair_epsnet(epsnet, self.rangespace_28, self.epsilon, self.points_28)
@@ -134,7 +136,7 @@ class TestFairEpsNet(unittest.TestCase):
             rangespace=self.rangespace_28,
             epsilon=self.epsilon,
             vc=self.ranges[0].vc_dim,
-            fairconfig=fairconfig
+            fairconfig=fairconfig,
         )
         self.assertTrue(
             is_fair_epsnet(epsnet, self.rangespace_28, self.epsilon, self.points_28)

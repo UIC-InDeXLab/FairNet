@@ -64,13 +64,14 @@ def find_fair_hitting_set_greedy(
 
 
 def find_fair_hitting_set_geometric(
-    points: List[Point], rangespace: List[Range], vc, fairconfig: FairConfig, c1=1
+    points: List[Point], rangespace: List[Range], vc, fairconfig: FairConfig, c1=1, color_ratios=None
 ) -> List[Point]:
     k = fairconfig.k
-    color_ratios = []
-    for color in range(k):
-        rate = [p for p in points if p.color == color]
-        color_ratios.append(len(rate) / len(points))
+    if color_ratios == None:
+        color_ratios = []
+        for color in range(k):
+            rate = [p for p in points if p.color == color]
+            color_ratios.append(len(rate) / len(points))
 
     weights, epsilon = _get_fair_reweights(
         points=points, rangespace=rangespace, k=k, color_ratios=color_ratios
