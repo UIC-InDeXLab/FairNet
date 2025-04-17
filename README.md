@@ -6,7 +6,7 @@
 - **Epsilon-samples**
 - **Geometric hitting sets**
 
-The repository also provides *fair* variants of these algorithms that return representative subsets respecting target color distributions on the points (e.g., 50% red and 50% blue).
+The repository also provides *fair* variants of these algorithms that return representative subsets respecting target color distributions on the points (e.g., An $\varepsilon$-net containing 50% red and 50% blue).
 
 This project is designed for **research purposes** and **quick proof-of-concept** implementations in geometric approximation and fair sampling.
 
