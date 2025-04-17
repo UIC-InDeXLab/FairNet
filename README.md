@@ -28,9 +28,8 @@ The following snippet constructs a random colored point set in $[0, 1]^2$, gener
 
 ```
 import random
-from core.ranges import Point, RectangleRange
+from core.ranges import Point, RectangleRange, get_range_space
 from algorithms.epsnet import build_epsnet_sample
-from utils import get_range_space
 
 # Configuration
 n, m = 1024, 1024
